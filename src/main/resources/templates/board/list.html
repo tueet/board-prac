@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+    <!-- Content -->
+    <div layout:fragment="content">
+        <h3>list</h3>
+
+        <script>
+            async function getList() {
+                let response = await fetch("api/board");
+                const jsonData = await response.json();
+
+                jsonData.forEach(board => {
+                    document.querySelector('.container').append(`<div>${board.boardNo} / ${board.title} / ${board.content} / ${board.writer}</div>`);
+                })
+            }
+
+            getList();
+        </script>
+    </div>
+
+
+</html>
