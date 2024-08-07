@@ -20,8 +20,8 @@ class BoardController {
     }
 
     @GetMapping("/{boardNo}")
-    public void view(@PathVariable int boardNo, Model model) {
-
+    public String view(@PathVariable int boardNo, Model model) {
+        return "board/view";
     }
 
 

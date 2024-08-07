@@ -4,23 +4,283 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default_layout}">
+
+    <style layout:fragment="style">
+        button {
+            height: 40px;
+            font-weight: 500;
+            border: 0;
+            border-radius: 5px;
+            transition: all ease .1s;
+        }
+
+        /* title */
+        h3 {
+            padding: 50px 0 10px;
+            font: 600 36px/150% sans-serif;
+        }
+
+        /* table */
+        table {
+            width: 100%;
+        }
+        thead {
+            border-bottom: 1px solid #A1A9D4;
+            background: #DFE4fF;
+        }
+        tbody {
+            border-bottom: 1px solid #BFBFBF;
+        }
+        tr:nth-child(even) {
+            background: #F2F2F2;
+        }
+        th,td {
+            padding: 8px;
+        }
+
+        .list-table button {
+            width: 80px;
+        }
+
+        .list-table .btn-del {
+            background: #FDD8D8;
+        }
+        .list-table .btn-del:hover,
+        .list-table .btn-del:focus-visible {
+            background: #F8C6C6;
+        }
+        .list-table .btn-update {
+            background: #DBEDFF;
+        }
+        .list-table .btn-update:hover,
+        .list-table .btn-update:focus-visible {
+            background: #C8E3FD;
+        }
+        .list-table .btn-detail {
+            background: #C5EAE7;
+        }
+        .list-table .btn-detail:hover,
+        .list-table .btn-detail:focus-visible {
+            background: #A4D3CF;
+        }
+
+
+        /* list-input-wrap */
+        .list-input-wrap {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-top: 50px;
+        }
+        .list-input-wrap label {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+        .list-input-wrap label + label {
+            margin-top: 5px;
+        }
+        .list-input-wrap label span {
+            width: 80px;
+            font-weight: 500;
+        }
+        .list-input-wrap label input {
+            width: calc(100% - 80px);
+            padding: 5px 10px;
+            border: 1px solid #DDD;
+            border-radius: 5px;
+        }
+        .list-input-wrap label input:focus-visible {
+            outline-color: #95A5F9;
+        }
+
+        .list-input-wrap .add-list {
+            width: 100px;
+            margin: 10px 0 0 auto;
+            background: #DFE4fF;
+        }
+        .list-input-wrap .add-list:hover,
+        .list-input-wrap .add-list:focus-visible {
+            background: #C2CCFF;
+        }
+    </style>
+
     <!-- Content -->
     <div layout:fragment="content">
+
         <h3>list</h3>
 
+        <table class="list-table" style="width: 100%">
+            <colgroup>
+                <col style="width: 10%;">
+                <col style="width: 15%;">
+                <col style="width: 20%;">
+                <col style="width: 15%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Title</th>
+                    <th>Contents</th>
+                    <th>Writer</th>
+                    <th>Delete</th>
+                    <th>Update</th>
+                    <th>More</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <form class="list-input-wrap" id="boardForm">
+            <label>
+                <span>Title</span>
+                <input id="inputTitle" name="inputTitle" type="text" placeholder="title">
+            </label>
+            <label>
+                <span>Contents</span>
+                <input id="inputContent" name="inputContent" type="text" placeholder="contents">
+            </label>
+            <label>
+                <span>Writer</span>
+                <input id="inputWriter" name="inputWriter" type="text" placeholder="write your name">
+            </label>
+            <button class="add-list" type="submit">Submit</button>
+        </form>
+
         <script>
+            // 초기 게시물 데이터 화면에 그리기
             async function getList() {
-                let response = await fetch("api/board");
+                const response = await fetch("api/board");
                 const jsonData = await response.json();
 
                 jsonData.forEach(board => {
-                    document.querySelector('.container').append(`<div>${board.boardNo} / ${board.title} / ${board.content} / ${board.writer}</div>`);
+                    document.querySelector('.list-table tbody').innerHTML += `
+                        <tr data-board-no="${board.boardNo}">
+                            <td>${board.boardNo}</td>
+                            <td>${board.title}</td>
+                            <td>${board.content}</td>
+                            <td>${board.writer}</td>
+                            <td><button class="btn-del" type="button">삭제</button></td>
+                            <td><button class="btn-update" type="button">수정</button></td>
+                            <td><button class="btn-detail" type="button">더보기</button></td>
+                        </tr>
+                    `;
                 })
             }
 
             getList();
+
+            // 게시물 게시하기
+            document.querySelector('#boardForm').addEventListener('submit', e => {
+                e.preventDefault();
+                try {
+                    sendInputValue();
+                    showMessage("Post success!");
+
+                } catch (e) {
+                    showMessage("Post fail!");
+                    throw e;
+                }
+            });
+
+            // 게시물 추가하기
+            async function sendInputValue() {
+                const url = '/api/board';
+
+                const inputTitle = document.getElementById("inputTitle").value;
+                const inputContent = document.getElementById("inputContent").value;
+                const inputWriter = document.getElementById("inputWriter").value;
+
+                const params = {
+                    "title": inputTitle,
+                    "content": inputContent,
+                    "writer": inputWriter,
+                };
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(params),
+                });
+
+                const result = await response.json();
+                console.log(result);
+            }
+
+            // function sendInputValue1() {
+            //     let inputTitle = document.getElementById("inputTitle").value;
+            //     let inputContent = document.getElementById("inputContent").value;
+            //     let inputWriter = document.getElementById("inputWriter").value;
+            //     const xhr = new XMLHttpRequest();
+            //     xhr.open("POST", "/api/board", true);
+            //     xhr.setRequestHeader("Content-Type", "application/json");
+            //     xhr.onreadystatechange = function() {
+            //         if (xhr.readyState === 4 && xhr.status === 200) {
+            //             let response = JSON.parse(xhr.responseText);
+            //             document.getElementById("response").innerText =
+            //                 "Received values: " + response.title + ", " + response.content + ", " + response.writer;
+            //         }
+            //     };
+            //     let data = JSON.stringify({
+            //         "title": inputTitle,
+            //         "content": inputContent,
+            //         "writer": inputWriter,
+            //     });
+            //     xhr.send(data);
+            // }
+
+            document.querySelector('.list-table tbody').addEventListener('click', async function(event) {
+                event.preventDefault();
+
+                // 게시물 삭제
+                if (event.target.classList.contains('btn-del')) {
+                    try {
+                        const tableRow = event.target.closest("tr");
+                        const boardNo = tableRow.dataset.boardNo;
+                        const url = `/api/board/${boardNo}`;
+
+                        const response = await fetch(url, {
+                            method: 'DELETE',
+                        });
+
+                        tableRow.remove();
+                        alert("Delete success!");
+                    } catch (e) {
+                        alert("Delete fail!");
+                        throw e;
+                    }
+                }
+
+                // 게시물 더보기
+                if (event.target.classList.contains('btn-detail')) {
+                    try {
+                        const tableRow = event.target.closest("tr");
+                        const boardNo = tableRow.dataset.boardNo;
+                        const url = `/api/board/${boardNo}`;
+
+                        const response = await fetch(url, {
+                            method: 'DELETE',
+                        });
+
+                        tableRow.remove();
+                        alert("Delete success!");
+                    } catch (e) {
+                        alert("Delete fail!");
+                        throw e;
+                    }
+                }
+            });
+
+            // 메시지 보여주기
+            function showMessage(msg) {
+                alert(msg);
+                window.location.reload();
+            }
         </script>
     </div>
-
-
 </html>

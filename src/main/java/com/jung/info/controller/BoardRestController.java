@@ -1,8 +1,6 @@
 package com.jung.info.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,8 +15,6 @@ class BoardRestController {
 
     static List<Map<String, String>> boardList = new ArrayList<>();
     static int boardNo = 0;
-
-
 
     static {
         for (int i = 0; i < 3; i++) {
@@ -50,8 +46,19 @@ class BoardRestController {
     // /api/board
     @PostMapping
     public Map<String, String> register(@RequestBody Map<String, String> body) {
+        String inputTitle = body.get("title");
+        String inputContent = body.get("content");
+        String inputWriter = body.get("writer");
 
-        return null;
+        Map<String, String> board = new HashMap<>();
+        board.put("title", inputTitle);
+        board.put("content", inputContent);
+        board.put("writer", inputWriter);
+        board.put("boardNo", (++boardNo) + "");
+
+        boardList.add(board);
+
+        return board;
     }
 
     // /api/board/1123123
@@ -63,8 +70,16 @@ class BoardRestController {
     // /api/board/1123123
     @DeleteMapping("{boardNo}")
     public String delete(@PathVariable int boardNo) {
-        return null;
-    }
+        try {
+            for (Map<String, String> board : boardList) {
 
-    
+                if (board.get("boardNo").equals(boardNo + "")) {
+                    boardList.remove(board);
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
