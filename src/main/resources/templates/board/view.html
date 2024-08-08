@@ -111,7 +111,7 @@
                 const boardData = await response.json();
 
                 if (boardData) {
-                    document.querySelector('#boardNo').value = boardData.boardNo;
+                    document.querySelector('#boardNo').value = boardData.no;
                     document.querySelector('#inputTitle').value = boardData.title;
                     document.querySelector('#inputContent').value = boardData.content;
                     document.querySelector('#inputWriter').value = boardData.writer;

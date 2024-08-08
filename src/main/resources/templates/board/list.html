@@ -148,8 +148,8 @@
 
                 jsonData.forEach(board => {
                     document.querySelector('.list-table tbody').innerHTML += `
-                        <tr data-board-no="${board.boardNo}">
-                            <td>${board.boardNo}</td>
+                        <tr data-board-no="${board.no}">
+                            <td>${board.no}</td>
                             <td>${board.title}</td>
                             <td>${board.content}</td>
                             <td>${board.writer}</td>
@@ -262,7 +262,7 @@
             // 메시지 보여주기
             function showMessage(msg) {
                 alert(msg);
-                window.location.reload();
+                // window.location.reload();
             }
         </script>
     </div>

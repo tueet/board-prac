@@ -17,17 +17,28 @@
         WHERE no = #{no}
     </select>
 
+    <!-- 게시판 등록 -->
+    <insert id="insertBoard">
+<!--        <selectKey resultType="int" keyProperty="no" order="BEFORE">-->
+<!--            SELECT COALESCE(MAX(no), 0) + 1 FROM tbl_board)-->
+<!--        </selectKey>-->
+        INSERT INTO tbl_board(no, title, content, writer)
+        VALUES(
+            #{no},
+            #{title},
+            #{content},
+            #{writer}
+        );
+    </insert>
+
+    <!-- 게시판 수정 -->
+    <update id="updateBoard"></update>
+
     <!-- 게시판 삭제 -->
     <delete id="deleteBoard">
         DELETE
         FROM tbl_board
         WHERE no = #{no}
     </delete>
-
-    <!-- 게시판 수정 -->
-    <update id="updateBoard"></update>
-
-    <!-- 게시판 등록 -->
-    <insert id="insertBoard"></insert>
 
 </mapper>
