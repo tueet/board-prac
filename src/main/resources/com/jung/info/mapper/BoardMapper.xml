@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jung.info.mapper.BoardMapper">
+
+    <!-- 게시판 전체 조회 -->
+    <select id="getBoardAllSearch" parameterType="com.jung.info.dto.BoardDto" resultType="com.jung.info.dto.BoardDto">
+        SELECT *
+        FROM tbl_board
+    </select>
+
+    <!-- 게시판 조회 -->
+    <select id="getBoardSearch" parameterType="com.jung.info.dto.BoardDto" resultType="com.jung.info.dto.BoardDto">
+        SELECT *
+        FROM tbl_board
+        WHERE no = #{no}
+    </select>
+
+    <!-- 게시판 삭제 -->
+    <delete id="deleteBoard">
+        DELETE
+        FROM tbl_board
+        WHERE no = #{no}
+    </delete>
+
+    <!-- 게시판 수정 -->
+    <update id="updateBoard"></update>
+
+    <!-- 게시판 등록 -->
+    <insert id="insertBoard"></insert>
+
+</mapper>

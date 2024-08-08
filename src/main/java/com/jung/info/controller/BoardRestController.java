@@ -1,85 +1,48 @@
 package com.jung.info.controller;
 
+import com.jung.info.dto.BoardDto;
+import com.jung.info.service.BoardService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/board")
 class BoardRestController {
 
-    static List<Map<String, String>> boardList = new ArrayList<>();
-    static int boardNo = 0;
-
-    static {
-        for (int i = 0; i < 3; i++) {
-            Map<String, String> board = new HashMap<>();
-            board.put("boardNo", boardNo + "");
-            board.put("title", "title" + boardNo);
-            board.put("content", "content" + boardNo);
-            board.put("writer", "writer" + boardNo);
-
-            boardNo++;
-
-            boardList.add(board);
-        }
-    }
+    final private BoardService boardService;
 
     // /api/board <<<
     @GetMapping
-    public List<Map<String, String>> list() {
-        return boardList;
+    public List<BoardDto> list() {
+        return boardService.getBoardAllSearch();
     }
 
     // /api/board/1123123
     @GetMapping("{boardNo}")
-    public Map<String, String> view(@PathVariable int boardNo) {
-        System.out.println(boardNo);
-        return null;
+    public BoardDto view(@PathVariable int boardNo) {
+        return boardService.getBoardSearch(boardNo);
     }
 
     // /api/board
     @PostMapping
-    public Map<String, String> register(@RequestBody Map<String, String> body) {
-        String inputTitle = body.get("title");
-        String inputContent = body.get("content");
-        String inputWriter = body.get("writer");
-
-        Map<String, String> board = new HashMap<>();
-        board.put("title", inputTitle);
-        board.put("content", inputContent);
-        board.put("writer", inputWriter);
-        board.put("boardNo", (++boardNo) + "");
-
-        boardList.add(board);
-
-        return board;
+    public boolean register(@RequestBody BoardDto boardDto) {
+        return boardService.insertBoard(boardDto);
     }
 
     // /api/board/1123123
     @PutMapping("{boardNo}")
-    public String update(@PathVariable int boardNo, @RequestBody Map<String, String> body) {
-        return null;
+    public boolean update(@PathVariable int boardNo, @RequestBody BoardDto updates) {
+        updates.setNo(boardNo);
+        return boardService.updateBoard(updates);
     }
 
     // /api/board/1123123
     @DeleteMapping("{boardNo}")
-    public String delete(@PathVariable int boardNo) {
-        try {
-            for (Map<String, String> board : boardList) {
-
-                if (board.get("boardNo").equals(boardNo + "")) {
-                    boardList.remove(board);
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
+    public boolean delete(@PathVariable int boardNo) {
+        return boardService.deleteBoard(boardNo);
     }
 }

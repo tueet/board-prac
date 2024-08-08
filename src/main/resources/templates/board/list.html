@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default_layout}">
 
@@ -48,13 +47,6 @@
         .list-table .btn-del:hover,
         .list-table .btn-del:focus-visible {
             background: #F8C6C6;
-        }
-        .list-table .btn-update {
-            background: #DBEDFF;
-        }
-        .list-table .btn-update:hover,
-        .list-table .btn-update:focus-visible {
-            background: #C8E3FD;
         }
         .list-table .btn-detail {
             background: #C5EAE7;
@@ -113,10 +105,9 @@
         <table class="list-table" style="width: 100%">
             <colgroup>
                 <col style="width: 10%;">
-                <col style="width: 15%;">
                 <col style="width: 20%;">
-                <col style="width: 15%;">
-                <col style="width: 10%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
                 <col style="width: 10%;">
                 <col style="width: 10%;">
             </colgroup>
@@ -128,7 +119,6 @@
                     <th>Writer</th>
                     <th>Delete</th>
                     <th>Update</th>
-                    <th>More</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -152,7 +142,7 @@
 
         <script>
             // 초기 게시물 데이터 화면에 그리기
-            async function getList() {
+            async function getBoard() {
                 const response = await fetch("api/board");
                 const jsonData = await response.json();
 
@@ -164,14 +154,13 @@
                             <td>${board.content}</td>
                             <td>${board.writer}</td>
                             <td><button class="btn-del" type="button">삭제</button></td>
-                            <td><button class="btn-update" type="button">수정</button></td>
                             <td><button class="btn-detail" type="button">더보기</button></td>
                         </tr>
                     `;
                 })
             }
 
-            getList();
+            getBoard();
 
             // 게시물 게시하기
             document.querySelector('#boardForm').addEventListener('submit', e => {
@@ -261,16 +250,10 @@
                     try {
                         const tableRow = event.target.closest("tr");
                         const boardNo = tableRow.dataset.boardNo;
-                        const url = `/api/board/${boardNo}`;
 
-                        const response = await fetch(url, {
-                            method: 'DELETE',
-                        });
-
-                        tableRow.remove();
-                        alert("Delete success!");
+                        window.location.href = `/board/${boardNo}`;
                     } catch (e) {
-                        alert("Delete fail!");
+                        alert("Error! You should fix it.");
                         throw e;
                     }
                 }
