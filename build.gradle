@@ -35,8 +35,8 @@ dependencies {
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-
-
+    // P6Spy :: sql driver spy - 쿼리 결과 출력해주는거
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
 
     // lombok
     compileOnly 'org.projectlombok:lombok:1.18.28'
